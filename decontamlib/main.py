@@ -53,7 +53,7 @@ def human_filter_main(argv=None):
         type=argparse.FileType("r"),
         help="FASTQ file of forward reads")
     p.add_argument(
-        "--reverse-reads", required=True,
+        "--reverse-reads", required=False,
         type=argparse.FileType("r"),
         help="FASTQ file of reverse reads")
     p.add_argument(
@@ -105,9 +105,13 @@ def human_filter_main(argv=None):
     config = get_config(args, args.organism)
 
     fwd_fp = args.forward_reads.name
-    rev_fp = args.reverse_reads.name
     args.forward_reads.close()
-    args.reverse_reads.close()
+    
+    if args.reverse_reads is None:
+        rev_fp = str(None)
+    else:
+        rev_fp = args.reverse_reads.name
+        args.reverse_reads.close()
 
     if args.sam_file is not None:
         config["method"] = "samfile"
