@@ -19,7 +19,7 @@ from decontamlib.tools import FilteringTool, tools_available
 #         "bwa_fp":"bwa",
 #         "num_threads":8
 #     }
-
+#
 #     if user_config_file is None:
 #         if organism == "human":
 #             default_user_config_fp = os.path.expanduser("~/.decontam_human.json")
@@ -27,7 +27,7 @@ from decontamlib.tools import FilteringTool, tools_available
 #             default_user_config_fp = os.path.expanduser("~/.decontam_phix.json")
 #         if os.path.exists(default_user_config_fp):
 #             user_config_file = open(default_user_config_fp)
-
+#
 #     if user_config_file is not None:
 #         user_config = json.load(user_config_file)
 #         config.update(user_config)
@@ -108,7 +108,7 @@ def human_filter_main(argv=None):
     args.forward_reads.close()
     
     if args.reverse_reads is None:
-        rev_fp = str(None)
+        rev_fp = None
     else:
         rev_fp = args.reverse_reads.name
         args.reverse_reads.close()
