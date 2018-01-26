@@ -62,14 +62,17 @@ class HumanFilterMainTests(unittest.TestCase):
 
     def test_with_sam_file(self):
         sam_file = tempfile.NamedTemporaryFile(suffix=".sam", mode="w")
-        sam_file.write(b5_sam)
+        sam_file.write(b5_sam.encode())
         sam_file.seek(0)
         self.args.extend(["--sam-file", sam_file.name])
 
         # Set executable for BWA to "false"
         # This program always returns non-zero exit status
-        self.args.extend(["--method", "bwa"])
-        self.args.extend(["--bwa_fp", "false"])
+        config_file = tempfile.NamedTemporaryFile(suffix=".json")
+        config = {"method":"bwa", "bwa_fp":"false"}
+        config_file.write(json.dumps(config).encode())
+        config_file.seek(0)
+        self.args.extend(["--config-file", config_file.name])
 
         human_filter_main(self.args)
 
@@ -82,8 +85,10 @@ class HumanFilterMainTests(unittest.TestCase):
 
     def test_keep_sam_file(self):
         index_fp = os.path.join(data_dir, "fakehuman")
-        self.args.extend(["--method", "bwa"])
-        self.args.extend(["--index", index_fp])
+        config_file = tempfile.NamedTemporaryFile(suffix=".json")
+        config_file.write(json.dumps({'method':'bwa', 'index':index_fp}).encode())
+        config_file.seek(0)
+        self.args.extend(["--config-file", config_file.name])
 
         self.args.extend(["--keep-sam-file"])
         human_filter_main(self.args)
@@ -92,7 +97,11 @@ class HumanFilterMainTests(unittest.TestCase):
 
 
     def test_all_human(self):
-        self.args.extend(["--method", "all_human"])
+        config_file = tempfile.NamedTemporaryFile(suffix=".json")
+        config_file.write(json.dumps({"method": "all_human"}).encode())
+        config_file.seek(0)
+        self.args.extend(["--config-file", config_file.name])
+
         human_filter_main(self.args)
 
         with open(self.summary_fp) as f:
@@ -109,7 +118,11 @@ class HumanFilterMainTests(unittest.TestCase):
 
 
     def test_no_human(self):
-        self.args.extend(["--method", "no_human"])
+        config_file = tempfile.NamedTemporaryFile(suffix=".json")
+        config_file.write(str.encode(json.dumps({"method": "no_human"})))
+        config_file.seek(0)
+        self.args.extend(["--config-file", config_file.name])
+
         human_filter_main(self.args)
 
         with open(self.summary_fp) as f:
@@ -127,8 +140,11 @@ class HumanFilterMainTests(unittest.TestCase):
 
     def test_bowtie(self):
         index_fp = os.path.join(data_dir, "fakehuman")
-        self.args.extend(["--method", "bowtie2"])
-        self.args.extend(["--index", index_fp])
+        index_fp = os.path.join(data_dir, "fakehuman")
+        config_file = tempfile.NamedTemporaryFile(suffix=".json")
+        config_file.write(json.dumps({"method": "bowtie2", "index": index_fp}).encode())
+        config_file.seek(0)
+        self.args.extend(["--config-file", config_file.name])
 
         human_filter_main(self.args)
 
@@ -141,8 +157,11 @@ class HumanFilterMainTests(unittest.TestCase):
 
     def test_bwa(self):
         index_fp = os.path.join(data_dir, "fakehuman")
-        self.args.extend(["--method", "bwa"])
-        self.args.extend(["--index", index_fp])
+        index_fp = os.path.join(data_dir, "fakehuman")
+        config_file = tempfile.NamedTemporaryFile(suffix=".json")
+        config_file.write(json.dumps({"method": "bwa", "index": index_fp}).encode())
+        config_file.seek(0)
+        self.args.extend(["--config-file", config_file.name])
 
         human_filter_main(self.args)
 

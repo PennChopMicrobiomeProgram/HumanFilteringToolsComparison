@@ -7,9 +7,8 @@ import re
 import shutil
 import subprocess
 import tempfile
-import decontamlib.utils as utils
 
-
+import decontamlib as utils
 from decontamlib.fastq import FastqSplitter
 from decontamlib.sam import get_mapped_reads
 
@@ -36,8 +35,9 @@ class _FilteringTool(object):
         annotations = self.annotate(fwd_fp, rev_fp, pct, frac, output_dir)
         with FastqSplitter(fwd_fp, output_dir) as s:
             s.partition(annotations, organism)
-        with FastqSplitter(rev_fp, output_dir) as s:
-            s.partition(annotations, organism)
+        if rev_fp is not None:
+            with FastqSplitter(rev_fp, output_dir) as s:
+                s.partition(annotations, organism)
         summary_data = summarize_annotations(annotations)
         return summary_data
 
@@ -83,7 +83,10 @@ class Bwa(_FilteringTool):
         return [(id, True if id in mapped else False) for id in ids]
 
     def _command(self, fwd_fp, rev_fp):
-        return [self.bwa_fp, "mem", "-M", "-t", str(self.num_threads), self.index, fwd_fp, rev_fp]
+        if rev_fp is None:
+            return [self.bwa_fp, "mem", "-M", "-t", str(self.num_threads), self.index, fwd_fp]
+        else:
+            return [self.bwa_fp, "mem", "-M", "-t", str(self.num_threads), self.index, fwd_fp, rev_fp]
 
     def _run(self, R1, R2, output_dir):
         if self.keep_sam_file:

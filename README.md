@@ -4,6 +4,9 @@
 removing human and other contaminating sequence from high-throughput
 DNA sequence data.
 
+* python3.5 version
+* works for both paired-end and single-end reads
+
 Alignment tools supported:
 
 * bwa
@@ -19,4 +22,3 @@ Tools to be added later:
 
 * BMTagger
 * Blat
-
